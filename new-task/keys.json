@@ -1,0 +1,5 @@
+{
+  "global": {
+    "cmd-t": "mod.open:new-task"
+  }
+}

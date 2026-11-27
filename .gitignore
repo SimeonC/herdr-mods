@@ -1,0 +1,6 @@
+.DS_Store
+*.error
+gpui-kit.d.ts
+jsconfig.json
+node_modules/
+__pycache__/

@@ -1,0 +1,13 @@
+{
+  "place": "none",
+  "title": "Branch cleanup",
+  "overlay": { "kind": "dialog", "width": 900, "height": 720 },
+  "palette": [
+    {
+      "title": "Branch cleanup",
+      "command": "mod.open",
+      "args": { "name": "branch-cleanup" },
+      "words": "worktree gc prune branches stale merged closed pr"
+    }
+  ]
+}
