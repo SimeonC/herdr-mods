@@ -2,6 +2,8 @@
 
 My mods and layout for the [Herdr](https://herdr.dev) desktop app.
 
+![Herdr with the agent bar and the tasks layout](preview.png)
+
 Each folder is laid out like `~/.config/herdr-app` and has a `RECIPE.md` (what it
 is, how it behaves, what it assumes):
 
