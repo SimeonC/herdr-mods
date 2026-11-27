@@ -285,6 +285,7 @@ export default class AgentBar extends View {
   render(cx) {
     const t = theme();
     const w = win() ?? {};
+    const focus = focused();
     const all = agents();
     const terms = terminals();
     const paneMap = new Map(panes().filter((p) => p.terminal).map((p) => [p.terminal, p.pane]));
@@ -481,11 +482,11 @@ export default class AgentBar extends View {
         .p(6)
         .gap(3)
         .rounded(9)
-        .border_1()
+        .border(a.focused ? 2 : 1)
         .border_color(a.focused ? t.accent : t.border)
-        .bg(a.focused ? t.selected : t.surface)
+        .bg(a.focused ? `${t.accent}2e` : t.surface)
         .cursor_pointer()
-        .hover((el) => el.bg(t.hover))
+        .hover((el) => el.bg(a.focused ? `${t.accent}3d` : t.hover))
         .tooltip(`${name}\n${where}${machine ? ` · ${machine}` : ""}${link ? `\nunder ${nameOf(link)}` : ""}`)
         .on_click(() => run("pane.focus", { pane: a.pane }))
         .on_mouse_down("right", () => openOverlay({
@@ -504,7 +505,7 @@ export default class AgentBar extends View {
             .child(statusGlyph(t, a.status))
             .when(Boolean(pic), (el) => el.child(pic))
             .child(div().flex_1().min_w(0).truncate().text_size(12.5).font_medium()
-              .text_color(a.status === "idle" ? t.muted : t.foreground).child(name))
+              .text_color(a.status === "idle" && !a.focused ? t.muted : t.foreground).child(name))
             .when(a.pinned, (el) => el.child(svg("mods/agent-bar/pin.svg").size(11).flex_none().text_color(t.dim))),
         )
         .child(
@@ -540,6 +541,11 @@ export default class AgentBar extends View {
         ...subs.map(() => SUB_H),
       ]);
       const pic = icon(term.program, 14, t.muted);
+      // A shell is "viewed" when its own pane (or the terminal, when it has no
+      // pane) is what the window is focused on, the same test the agent cards
+      // get from `focused` on the agent.
+      const isFocused = Boolean(focus
+        && ((pane && focus.pane === pane) || focus.terminal === term.address));
       const el = own(v_flex())
         .id(`ab-shell-${term.address}`)
         .w(CARD_W)
@@ -547,11 +553,11 @@ export default class AgentBar extends View {
         .p(6)
         .gap(3)
         .rounded(9)
-        .border_1()
-        .border_color(t.border)
-        .bg(t.surface)
+        .border(isFocused ? 2 : 1)
+        .border_color(isFocused ? t.accent : t.border)
+        .bg(isFocused ? `${t.accent}2e` : t.surface)
         .cursor_pointer()
-        .hover((el) => el.bg(t.hover))
+        .hover((el) => el.bg(isFocused ? `${t.accent}3d` : t.hover))
         .tooltip(`${name}${where ? `\n${where}` : ""}${link ? `\nunder ${nameOf(link)}` : ""}`)
         .on_click(() => pane
           ? run("pane.focus", { pane })
@@ -573,7 +579,7 @@ export default class AgentBar extends View {
             .when(Boolean(pic), (el) => el.child(pic))
             .when(!pic, (el) => el.child(svg("mods/agent-bar/terminal.svg").size(14).flex_none().text_color(t.muted)))
             .child(div().flex_1().min_w(0).truncate().text_size(12.5).font_medium()
-              .text_color(t.muted).child(name)),
+              .text_color(isFocused ? t.foreground : t.muted).child(name)),
         )
         .child(
           h_flex().gap(4).items_center()
